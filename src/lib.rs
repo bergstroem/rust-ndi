@@ -3,13 +3,15 @@ use crate::instance::NDIHandle;
 use std::sync::Arc;
 
 #[allow(non_snake_case, non_camel_case_types, non_upper_case_globals, dead_code, clippy::all)]
-mod sdk;
+pub mod sdk;
 
 pub mod finder;
 mod instance;
 pub mod receive;
 pub mod send;
 mod util;
+
+
 
 pub use crate::instance::load;
 use crate::receive::{ReceiveBandwidth, ReceiveColorFormat, ReceiveCreateError, ReceiveInstance};

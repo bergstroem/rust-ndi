@@ -1,4 +1,5 @@
 use crate::finder::FindSource;
+use crate::sdk::NDIlib_audio_frame_interleaved_16s_t;
 use crate::util::to_ndi_source;
 use crate::{sdk, NDIHandle};
 use ptrplus::AsPtr;
@@ -154,7 +155,7 @@ impl AudioFrame {
         if let Ok(locked) = self.instance.lock() {
             unsafe {
                 // Divide by four as this is a list of f32
-                let len = locked.channel_stride_in_bytes * locked.no_channels / 4; 
+                let len = locked.channel_stride_in_bytes * locked.no_channels / 4;
                 let data = slice::from_raw_parts(locked.p_data, len as usize);
                 Some(GuardedPointer {
                     _guard: locked,
@@ -164,6 +165,31 @@ impl AudioFrame {
         } else {
             None
         }
+    }
+
+    pub fn write_as_s16(&self, target: &mut [u8]) -> bool {
+        if let Some(parent) = self.parent.upgrade() {
+            let mut dst = NDIlib_audio_frame_interleaved_16s_t {
+                sample_rate: 0,
+                no_channels: 0,
+                no_samples: 0,
+                timecode: 0,
+                reference_level: 0,
+                p_data: target.as_mut_ptr() as *mut i16,
+            };
+            unsafe {
+                if let Ok(locked) = self.instance.lock() {
+                    parent.sdk_instance.NDIlib_util_audio_to_interleaved_16s_v2.unwrap()(
+                        locked.deref(),
+                        &mut dst as *mut NDIlib_audio_frame_interleaved_16s_t,
+                    );
+                }
+            }
+
+            return true;
+        }
+
+        false
     }
 }
 

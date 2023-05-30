@@ -11,8 +11,6 @@ pub mod receive;
 pub mod send;
 mod util;
 
-
-
 pub use crate::instance::load;
 use crate::receive::{ReceiveBandwidth, ReceiveColorFormat, ReceiveCreateError, ReceiveInstance};
 use crate::send::{SendCreateError, SendInstance};
@@ -53,5 +51,9 @@ impl NDIInstance {
         clock_audio: bool,
     ) -> Result<SendInstance, SendCreateError> {
         send::create_send_instance(self.handle.clone(), name, clock_video, clock_audio)
+    }
+
+    pub fn handle(&self) -> &NDIHandle {
+        &self.handle
     }
 }

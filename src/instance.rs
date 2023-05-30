@@ -112,7 +112,7 @@ mod internal {
                         if instance.is_null() {
                             Err("Library failed to initialise".to_string())
                         } else {
-                            if inst.NDIlib_initialize.unwrap()() {
+                            if (*instance).NDIlib_initialize.unwrap()() {
                                 Ok(NDIInstance {
                                     handle: Arc::new(NDIHandle {
                                         _handle: Some(lib),

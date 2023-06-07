@@ -324,6 +324,7 @@ pub enum ReceiveCaptureResultType {
 }
 pub enum ReceiveCaptureResult {
     None,
+    StatusChange,
     Video(VideoFrame),
     Audio(AudioFrame),
     Metadata(u32),
@@ -445,6 +446,7 @@ impl ReceiveInstanceExt for Arc<ReceiveInstance> {
                 },
             },
             sdk::NDIlib_frame_type_none => Ok(ReceiveCaptureResult::None),
+            sdk::NDIlib_frame_type_status_change => Ok(ReceiveCaptureResult::StatusChange),
             _ => Err(ReceiveCaptureError::Invalid),
         }
     }
